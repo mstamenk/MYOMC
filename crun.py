@@ -54,7 +54,7 @@ if __name__ == "__main__":
     #parser.add_argument("--os", type=str, help="Force SLC6 or CC7 (might not work!)")
     parser.add_argument("--seed_offset", type=int, default=0, help="Offset random seed (useful for extending previous runs)")
     parser.add_argument("--mem", type=int, default=7900, help="Memory to request")
-    parser.add_argument("--max_nthreads", type=int, default=8, help="Maximum number of threads (reduce if condor priority is a problem)")
+    parser.add_argument("--max_nthreads", type=int, default=1, help="Maximum number of threads (reduce if condor priority is a problem)")
     parser.add_argument("--overwrite", "-f", action="store_true", help="Force overwrite outputs")
     args = parser.parse_args()
 
@@ -198,8 +198,10 @@ if __name__ == "__main__":
                 run_script.write("cp *NANOGEN*root {} \n".format(args.outcp))
             if args.keepNANO:
                 run_script.write("cp *NanoAOD*root {} \n".format(args.outcp))
+                run_script.write("cp *NANOAOD*root {} \n".format(args.outcp))
             if args.keepMINI:
                 run_script.write("cp *MiniAOD*root {} \n".format(args.outcp))
+                run_script.write("cp *MINIAOD*root {} \n".format(args.outcp))
             if args.keepDR:
                 run_script.write("cp *DR*root {} \n".format(args.outcp))
             if args.keepRECO:
@@ -275,7 +277,7 @@ if __name__ == "__main__":
         files_to_transfer.append("{}/{}/pileupinput.dat".format(MYOMCPATH, args.campaign))
     if args.env:
         files_to_transfer.append("{}/{}/env.tar.gz".format(MYOMCPATH, args.campaign))
-    csub_command = "csub runwrapper.sh -t tomorrow --mem {} --nCores {} -F {} --queue_n {} -x $HOME/private/x509up".format(
+    csub_command = "csub runwrapper.sh -t workday --mem {} --nCores {} -F {} --queue_n {} -x $HOME/private/x509up".format(
                         args.mem,
                         args.max_nthreads, 
                         ",".join(files_to_transfer), 
