@@ -284,3 +284,45 @@ if [ ! -f "RunIISummer20UL16MINIAODSIMAPV_$NAME_$JOBINDEX.root" ]; then
     echo "RunIISummer20UL16MINIAODSIMAPV_$NAME_$JOBINDEX.root not found. Exiting."
     return 1
 fi
+
+# NanoAOD
+export SCRAM_ARCH=slc7_amd64_gcc700
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+if [ -r CMSSW_10_6_25/src ] ; then
+    echo release CMSSW_10_6_25 already exists
+    cd CMSSW_10_6_25/src
+    eval `scram runtime -sh`
+else
+    scram project -n "CMSSW_10_6_25" CMSSW_10_6_25
+    cd CMSSW_10_6_25/src
+    eval `scram runtime -sh`
+fi
+cd $CMSSW_BASE/src
+scram b
+cd $TOPDIR
+
+cmsDriver.py  \
+    --python_filename "RunIISummer20UL16NANOAODSIMAPV_${NAME}_cfg.py" \
+    --eventcontent NANOAODSIM \
+    --customise Configuration/DataProcessing/Utils.addMonitoring \
+    --datatier NANOAODSIM \
+    --filein "file:RunIISummer20UL16MINIAODSIMAPV_$NAME_$JOBINDEX.root" \
+    --fileout "file:RunIISummer20UL16NANOAODSIMAPV_$NAME_$JOBINDEX.root" \
+    --conditions 106X_mcRun2_asymptotic_preVFP_v11 \
+    --step NANO \
+    --era Run2_2016_HIPM,run2_nanoAOD_106Xv2 \
+    --no_exec \
+    --nThreads $(( $MAX_NTHREADS < 8 ? $MAX_NTHREADS : 8 )) \
+    --mc \
+    -n $NEVENTS
+cmsRun "RunIISummer20UL16NANOAODSIMAPV_${NAME}_cfg.py"
+if [ ! -f "RunIISummer20UL16NANOAODSIMAPV_$NAME_$JOBINDEX.root" ]; then
+    echo "RunIISummer20UL16NANOAODSIMAPV_$NAME_$JOBINDEX.root not found. Exiting."
+    return 1
+fi
+
+
+
+
+
+
