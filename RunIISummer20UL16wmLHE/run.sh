@@ -176,15 +176,15 @@ fi
 
 
 # HLT
-export SCRAM_ARCH=slc7_amd64_gcc630
+export SCRAM_ARCH=slc7_amd64_gcc530
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-if [ -r CMSSW_8_0_33_UL/src ] ; then
-    echo release CMSSW_8_0_33_UL already exists
-    cd CMSSW_8_0_33_UL/src
+if [ -r CMSSW_8_0_36_UL_patch1/src ] ; then
+    echo release CMSSW_8_0_36_UL already exists
+    cd CMSSW_8_0_36_UL_patch1/src
     eval `scram runtime -sh`
 else
-    scram project -n "CMSSW_8_0_33_UL" CMSSW_8_0_33_UL
-    cd CMSSW_8_0_33_UL/src
+    scram project -n "CMSSW_8_0_36_UL_patch1" CMSSW_8_0_36_UL_patch1
+    cd CMSSW_8_0_36_UL_patch1/src
     eval `scram runtime -sh`
 fi
 cd $CMSSW_BASE/src
@@ -194,14 +194,14 @@ cd $TOPDIR
 cmsDriver.py  \
     --python_filename "RunIISummer20UL16HLT_${NAME}_cfg.py" \
     --eventcontent RAWSIM \
-    ---inputCommands "keep *","drop *_*_BMTF_*","drop *PixelFEDChannel*_*_*_*" \
-    ---outputCommand "keep *_mix_*_*,keep *_genPUProtons_*_*" \
+    --inputCommands "keep *","drop *_*_BMTF_*","drop *PixelFEDChannel*_*_*_*" \
+    --outputCommand "keep *_mix_*_*,keep *_genPUProtons_*_*" \
     --customise Configuration/DataProcessing/Utils.addMonitoring \
     --datatier GEN-SIM-RAW \
     --filein "file:RunIISummer20UL16DIGIPremix_$NAME_$JOBINDEX.root" \
     --fileout "file:RunIISummer20UL16HLT_$NAME_$JOBINDEX.root" \
     --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 \
-    ---customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' \
+    --customise_commands 'process.source.bypassVersionCheck = cms.untracked.bool(True)' \
     --step HLT:25ns15e33_v4 \
     --geometry DB:Extended \
     --era Run2_2016 \
