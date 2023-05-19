@@ -12,12 +12,8 @@ if [ -z ${QUEUE} ]; then
 fi
 
 if [ "$QUEUE" == "condor" ]; then
-    crun.py test_zpqq $MYOMCPATH/test/fragment_zpqq.py RunIISummer20UL17wmLHE \
-        --outEOS "/store/user/$USER/PrivateMC/test/" \
-        --keepMINI \
-        --nevents_job 10 \
-        --njobs 10 \
-        --env
+    #crun.py test_hh_trigger $MYOMCPATH/test/TSG-Run3Summer22wmLHEGS-00016_fragment.py Run3Summer22wmLHE \
+    crun.py test_hhh_trigger2 $MYOMCPATH/test/HIG-Run3Summer22wmLHEGS-00046-fragment.py Run3Summer22wmLHE --outEOS "/isilon/data/users/mstamenk/mc-for-trigger/MYOMC/test/test_hhh_trigger/samples" --keepMINI --keepNANO --nevents_job 10 --njobs 1 --env --pileup_file 
 elif [ "$QUEUE" == "condor_eos" ]; then
     crun.py test_zpqq $MYOMCPATH/test/fragment_zpqq.py RunIISummer20UL17wmLHE \
         --keepMINI \
@@ -26,9 +22,9 @@ elif [ "$QUEUE" == "condor_eos" ]; then
         --env
 elif [ "$QUEUE" == "local" ]; then
     STARTDIR=$PWD
-    mkdir testjob
-    cd testjob
-    source "$STARTDIR/../RunIISummer20UL17wmLHE/run.sh" test "$STARTDIR/fragment_zpqq.py" 10 1 1 "$STARTDIR/../RunIISummer20UL17wmLHE/pileupinput.dat"
+    mkdir testjob2
+    cd testjob2
+    source "$STARTDIR/../Run3Summer22wmLHE/run.sh" test "$STARTDIR/HIG-Run3Summer22wmLHEGS-00046-fragment.py" 10 1 1
     # Args are: name fragment_path nevents random_seed nthreads pileup_filelist
     cd $STARTDIR
 fi

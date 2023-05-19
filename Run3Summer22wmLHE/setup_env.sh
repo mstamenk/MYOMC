@@ -16,7 +16,7 @@
 
 mkdir env
 cd env
-export SCRAM_ARCH=el8_amd64_gcc10
+#export SCRAM_ARCH=el8_amd64_gcc10
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
 scram project -n "CMSSW_12_4_11_patch3" CMSSW_12_4_11_patch3

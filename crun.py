@@ -14,6 +14,8 @@ elif "lxplus" in hostname:
     host = "lxplus"
 elif "uscms" in hostname:
     host = "cmsconnect"
+elif 'brux20' in hostname:
+    host = 'brux20'
 else:
     raise ValueError("Unknown host {}".format(hostname))
 
@@ -59,7 +61,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Campaign check
-    if not args.campaign in ["RunIIFall18GS", "RunIIFall18GSBParking", "RunIISummer20UL17wmLHE", "NANOGEN"]:
+    if not args.campaign in ["RunIIFall18GS", "RunIIFall18GSBParking", "RunIISummer20UL17wmLHE", "NANOGEN","Run3Summer22wmLHE"]:
         raise ValueError("Unknown campaign: {}".format(args.campaign))
 
     # Check fragment exists
@@ -85,7 +87,7 @@ if __name__ == "__main__":
 
     # For args.outEOS, make sure it's formatted correctly, and make sure output dir exists
     if args.outEOS:
-        if args.outEOS[:6] != "/store" and args.outEOS[:5] != "/user":
+        if args.outEOS[:6] != "/store" and args.outEOS[:5] != "/user" and args.outEOS[:7] != '/isilon':
             raise ValueError("Argument --outEOS must start with /store or /user (you specified --outEOS {})".format(args.outEOS))
         #if not os.path.isdir("/eos/uscms/{}".format(args.outEOS)):
         #    raise ValueError("Output EOS directory does not exist! (you specified --outEOS {}_".format(args.outEOS))
@@ -101,6 +103,8 @@ if __name__ == "__main__":
             eos_prefix = "root://cmseos.fnal.gov"
         elif host == "cmsconnect":
             eos_prefix = "root://cmseos.fnal.gov"
+        elif host == "brux20":
+            eos_prefix = "root://cmsxrootd.fnal.gov/"
         else:
             raise ValueError("Unable to determine EOS prefix")
 
@@ -148,6 +152,7 @@ if __name__ == "__main__":
         run_script.write("pwd\n")
         run_script.write("mkdir work\n")
         run_script.write("cd work\n")
+        run_script.write("export PYTHONPATH=$PWD:$PYTHONPATH:/usr/bin/")
         run_script.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
         if args.env:
             run_script.write("mv ../env.tar.gz .\n")
@@ -182,8 +187,10 @@ if __name__ == "__main__":
                 run_script.write("xrdcp -p -f *NANOGEN*root {}/{} \n".format(eos_prefix, args.outEOS))
             if args.keepNANO:
                 run_script.write("xrdcp -p -f *NANOAOD*root {}/{} \n".format(eos_prefix, args.outEOS))
+                run_script.write("xrdcp -p -f *NanoAOD*root {}/{} \n".format(eos_prefix, args.outEOS))
             if args.keepMINI:
                 run_script.write("xrdcp -p -f *MINIAOD*root {}/{} \n".format(eos_prefix, args.outEOS))
+                run_script.write("xrdcp -p -f *MiniAOD*root {}/{} \n".format(eos_prefix, args.outEOS))
             if args.keepDR:
                 run_script.write("xrdcp -p -f *DR*root {}/{} \n".format(eos_prefix, args.outEOS))
             if args.keepRECO:

@@ -60,16 +60,16 @@ echo "Pileup filelist=$PILEUP_FILELIST"
 TOPDIR=$PWD
 
 # wmLHE
-export SCRAM_ARCH=el8_amd64_gcc10
+#export SCRAM_ARCH=el8_amd64_gcc10
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-if [ -r CMSSW_12_4_11_patch3/src ] ; then 
-    echo release CMSSW_12_4_11_patch3 already exists
-    cd CMSSW_12_4_11_patch3/src
+if [ -r CMSSW_13_0_6/src ] ; then 
+    echo release CMSSW_13_0_6 already exists
+    cd CMSSW_13_0_6/src
     eval `scram runtime -sh`
 else
-    scram project -n "CMSSW_12_4_11_patch3" CMSSW_12_4_11_patch3
-    cd CMSSW_12_4_11_patch3/src
+    scram project -n "CMSSW_13_0_6" CMSSW_13_0_6
+    cd CMSSW_13_0_6/src
     eval `scram runtime -sh`
 fi
 
@@ -91,7 +91,7 @@ cmsDriver.py Configuration/GenProduction/python/fragment.py \
     --customise Configuration/DataProcessing/Utils.addMonitoring \
     --datatier GEN-SIM,LHE \
     --fileout "file:Run3Summer22wmLHE_$NAME_$JOBINDEX.root" \
-    --conditions 124X_mcRun3_2022_realistic_v12 \
+    --conditions 130X_mcRun3_2023_realistic_v8 \
     --beamspot Realistic25ns13p6TeVEarly2022Collision \
     --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${SEED})" \
     --step LHE,GEN,SIM \
@@ -149,7 +149,7 @@ fi
 
 
 # DIGIPremix
-export SCRAM_ARCH=el8_amd64_gcc10
+#export SCRAM_ARCH=el8_amd64_gcc10
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 if [ -r CMSSW_13_0_6/src ] ; then
     echo release CMSSW_13_0_6 already exists
@@ -173,8 +173,8 @@ cmsDriver.py  \
     --filein "file:Run3Summer22wmLHE_$NAME_$JOBINDEX.root" \
     --fileout "file:Run3Summer22DRPremix_$NAME_$JOBINDEX.root" \
     --pileup_input "dbs:/Neutrino_E-10_gun/Run3Summer21PrePremix-Summer22_124X_mcRun3_2022_realistic_v11-v2/PREMIX" \
-	--conditions conditions 124X_mcRun3_2022_realistic_v12 \
-	--step DIGI,DATAMIX,L1,DIGI2RAW,HLT:2023v11 \
+	--conditions 130X_mcRun3_2023_realistic_v8 \
+	--step DIGI,DATAMIX,L1,DIGI2RAW,HLT \
 	--procModifiers premix_stage2,siPixelQualityRawToDigi \
 	--geometry DB:Extended \
 	--datamix PreMix \
@@ -184,12 +184,13 @@ cmsDriver.py  \
     --nThreads $(( $MAX_NTHREADS < 8 ? $MAX_NTHREADS : 8 )) \
     -n $NEVENTS
 cmsRun "Run3Summer22DIGIPremix_${NAME}_cfg.py"
-if [ ! -f "Run3Summer22DIGIPremix_$NAME_$JOBINDEX.root" ]; then
-    echo "Run3Summer22DIGIPremix_$NAME_$JOBINDEX.root not found. Exiting."
+if [ ! -f "Run3Summer22DRPremix_$NAME_$JOBINDEX.root" ]; then
+    echo "Run3Summer22DRPremix_$NAME_$JOBINDEX.root not found. Exiting."
     return 1
 fi
 
 cd $TOPDIR
+cmsDriver.py  \
 cmsDriver.py  \
     --python_filename "Run3Summer22DRPremix_${NAME}_cfg.py" \
 	--eventcontent AODSIM \
@@ -197,9 +198,8 @@ cmsDriver.py  \
 	--datatier AODSIM \
     --filein "file:Run3Summer22DRPremix_$NAME_$JOBINDEX.root" \
     --fileout "file:Run3Summer22DRPremix_2_$NAME_$JOBINDEX.root" \
-	--conditions conditions 124X_mcRun3_2022_realistic_v12 \
+	--conditions 130X_mcRun3_2023_realistic_v8 \
 	--step RAW2DIGI,L1Reco,RECO,RECOSIM \
-	--procModifiers siPixelQualityRawToDigi \
 	--geometry DB:Extended \
 	--era Run3 \
 	--no_exec \
@@ -207,13 +207,13 @@ cmsDriver.py  \
     --nThreads $(( $MAX_NTHREADS < 8 ? $MAX_NTHREADS : 8 )) \
     -n $NEVENTS
 cmsRun "Run3Summer22DRPremix_${NAME}_cfg.py"
-if [ ! -f "Run3Summer22DRPremix_$NAME_$JOBINDEX.root" ]; then
-    echo "Run3Summer22DRPremix_$NAME_$JOBINDEX.root not found. Exiting."
+if [ ! -f "Run3Summer22DRPremix_2_$NAME_$JOBINDEX.root" ]; then
+    echo "Run3Summer22DRPremix_2_$NAME_$JOBINDEX.root not found. Exiting."
     return 1
 fi
 
 # MiniAOD
-export SCRAM_ARCH=el8_amd64_gcc10
+#export SCRAM_ARCH=el8_amd64_gcc10
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 if [ -r CMSSW_13_0_6/src ] ; then
     echo release CMSSW_13_0_6 already exists
@@ -235,11 +235,10 @@ cmsDriver.py  \
 	--datatier MINIAODSIM \
     --filein "file:Run3Summer22DRPremix_2_$NAME_$JOBINDEX.root" \
     --fileout "file:Run3Summer22MINIAODSIM_$NAME_$JOBINDEX.root" \
-	--conditions 124X_mcRun3_2022_realistic_v12 \
+	--conditions 130X_mcRun3_2023_realistic_v8 \
 	--step PAT \
 	--geometry DB:Extended \
-	--era Run2_2018 \
-	--runUnscheduled \
+	--era Run3 \
 	--no_exec \
     --nThreads $(( $MAX_NTHREADS < 8 ? $MAX_NTHREADS : 8 )) \
 	--mc \
@@ -251,7 +250,7 @@ if [ ! -f "Run3Summer22MINIAODSIM_$NAME_$JOBINDEX.root" ]; then
 fi
 #
 ## NanoAOD
-export SCRAM_ARCH=el8_amd64_gcc10
+#export SCRAM_ARCH=el8_amd64_gcc10
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 if [ -r CMSSW_13_0_6/src ] ; then
     echo release CMSSW_13_0_6 already exists
@@ -273,7 +272,7 @@ cmsDriver.py  \
     --datatier NANOAODSIM \
     --filein "file:Run3Summer22MINIAODSIM_$NAME_$JOBINDEX.root" \
     --fileout "file:Run3Summer22NANOAODSIM_$NAME_$JOBINDEX.root" \
-    --conditions 126X_mcRun3_2022_realistic_v2 \
+    --conditions 130X_mcRun3_2023_realistic_v8 \
     --step NANO \
     --era Run3,run3_nanoAOD_124 \
     --no_exec \
