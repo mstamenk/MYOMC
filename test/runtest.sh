@@ -13,7 +13,7 @@ fi
 
 if [ "$QUEUE" == "condor" ]; then
     #crun.py test_hh_trigger $MYOMCPATH/test/TSG-Run3Summer22wmLHEGS-00016_fragment.py Run3Summer22wmLHE \
-    crun.py test_hhh_trigger2 $MYOMCPATH/test/HIG-Run3Summer22wmLHEGS-00046-fragment.py Run3Summer22wmLHE --outEOS "/isilon/data/users/mstamenk/mc-for-trigger/MYOMC/test/test_hhh_trigger/samples" --keepMINI --keepNANO --nevents_job 10 --njobs 1 --env --pileup_file 
+    crun.py test_hhh_trigger $MYOMCPATH/test/HIG-Run3Summer22wmLHEGS-00046-fragment.py Run3Summer22wmLHE --outEOS "/isilon/data/users/mstamenk/mc-for-trigger/MYOMC/test/test_hhh_trigger/samples" --keepMINI --keepNANO --nevents_job 10 --njobs 1 --env --pileup_file 
 elif [ "$QUEUE" == "condor_eos" ]; then
     crun.py test_zpqq $MYOMCPATH/test/fragment_zpqq.py RunIISummer20UL17wmLHE \
         --keepMINI \
