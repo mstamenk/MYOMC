@@ -1,0 +1,1 @@
+crun.py test_hhh_trigger_2 $MYOMCPATH/test/HIG-Run3Summer22wmLHEGS-00046-fragment.py Run3Summer22wmLHE --outEOS "/isilon/data/users/mstamenk/mc-for-trigger/MYOMC/test/test_hhh_trigger/samples" --keepMINI --keepNANO --nevents_job 10 --njobs 1 --env --pileup_file 
