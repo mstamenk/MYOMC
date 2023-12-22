@@ -61,7 +61,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Campaign check
-    if not args.campaign in ["RunIIFall18GS", "RunIIFall18GSBParking", "RunIISummer20UL17wmLHE", "NANOGEN","Run3Summer22wmLHE"]:
+    if not args.campaign in ["RunIIFall18GS", "RunIIFall18GSBParking", "RunIISummer20UL17wmLHE", "NANOGEN","Run3Summer22wmLHE","Run3Winter24"]:
         raise ValueError("Unknown campaign: {}".format(args.campaign))
 
     # Check fragment exists
@@ -152,7 +152,7 @@ if __name__ == "__main__":
         run_script.write("pwd\n")
         run_script.write("mkdir work\n")
         run_script.write("cd work\n")
-        run_script.write("export PYTHONPATH=$PWD:$PYTHONPATH:/usr/bin/")
+        run_script.write("export PYTHONPATH=$PWD:$PYTHONPATH:/usr/bin/\n")
         run_script.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
         if args.env:
             run_script.write("mv ../env.tar.gz .\n")
@@ -187,6 +187,7 @@ if __name__ == "__main__":
                 run_script.write("xrdcp -p -f *NANOGEN*root {}/{} \n".format(eos_prefix, args.outEOS))
             if args.keepNANO:
                 run_script.write("xrdcp -p -f *NANOAOD*root {}/{} \n".format(eos_prefix, args.outEOS))
+                run_script.write("cp  *NANOAOD*root {} \n".format(args.outEOS))
                 run_script.write("xrdcp -p -f *NanoAOD*root {}/{} \n".format(eos_prefix, args.outEOS))
             if args.keepMINI:
                 run_script.write("xrdcp -p -f *MINIAOD*root {}/{} \n".format(eos_prefix, args.outEOS))
